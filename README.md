@@ -14,16 +14,22 @@ For production, make sure to disable settings.DEBUG, set settings.ALLOWED_HOSTS,
 
 ### Parse credit card number
 GET `/card/{credit_card_number}`
+
 Example Request: `curl 127.0.0.1:8000/card/4111111111111111`
+
 Response: `{"mii": "4", "iin": "411111", "pan": "1111111111", "checkdigit": "1", "valid": true, "network": "Visa"}`
 
 "network" will be null if no match is found
+
 "checkdigit" will be null if card number is invalid (fails Luhn)
 
 ### Generate random credit card
 GET `/card/random/{network}`
+
 Args: network must be one of: ['amercian_express'|discover_card'|'jcb'|'mastercard'|'visa']
+
 Example Request: `curl 127.0.0.1:8000/card/random/american_express`
+
 Response: `{"3700003550876594": {"mii": "3", "iin": "370000", "pan": "355087659", "checkdigit": "4", "valid": true, "network": "American Express"}}`
 
 
@@ -49,21 +55,18 @@ python ./manage.py test
 ## Requirements
 
 Create an API that can validate credit cards and debit cards based solely on the card number. Given a card number, the api should return:
-• Whether or not the card is valid
-• The Major Industry Identifier (MII)
-• The Issuer Identification Number (IIN)
-• The personal account number
-• The check digit
+* Whether or not the card is valid
+* The Major Industry Identifier (MII)
+* The Issuer Identification Number (IIN)
+* The personal account number
+* The check digit
 
 The API should be RESTful and use the various HTTP methods appropriately
-• The API should be written in Python using Django for the web app backend
-• Use the Luhn Algorithm to validate the card number
-• Detect (at least) the 4 major US networks: Visa, MasterCard, Amex, and Discover
+* The API should be written in Python using Django for the web app backend
+* Use the Luhn Algorithm to validate the card number
+* Detect (at least) the 4 major US networks: Visa, MasterCard, Amex, and Discover
 
 ## ToDo
-* Catch all 500s
-* Finish bonus "random number for network"
-* More documentation
-* Code cleanup
-* Add integration tests which call endpoints
+* Catch all 500s in middleware?
+* Endpoint documentation
 
