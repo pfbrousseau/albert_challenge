@@ -21,6 +21,14 @@ class TestCard(TestCase):
         card = Card(number='4'+'1'*15)
         assert(card.pan == '1'*10)
 
+    def test_valid(self):
+        card = Card(number='4'+'1'*15)
+        assert(card.valid)
+
+    def test_invalid(self):
+        card = Card(number='4'+'1'*14+'0')
+        assert(not card.valid)
+
 
 class TestNetworks(TestCase):
     def test_lower_mc(self):
@@ -31,12 +39,12 @@ class TestNetworks(TestCase):
     def test_lowerbound(self):
         assert Card(number='222099').network is None
 
+    def test_upperbound(self):
+        assert Card(number='999999').network is None
+
     def test_visa(self):
         assert len(V) > 1  # Make sure Visa is defined
         assert Card(number='400000000').network == V
 
     def test_visa_411(self):
-        assert len(V) > 1  # Make sure Visa is defined
-
-        # import pdb; pdb.set_trace()
         assert Card(number='4'+'1'*15).network == V, "Standard Visa test number should be recognized as Visa"
