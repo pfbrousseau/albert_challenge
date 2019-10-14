@@ -13,7 +13,7 @@
 For production, make sure to disable settings.DEBUG, set settings.ALLOWED_HOSTS, hide the secret key, etc.
 
 ### Parse credit card number
-GET /card/{credit_card_number}
+GET `/card/{credit_card_number}`
 Example Request: `curl 127.0.0.1:8000/card/4111111111111111`
 Response: `{"mii": "4", "iin": "411111", "pan": "1111111111", "checkdigit": "1", "valid": true, "network": "Visa"}`
 
@@ -21,8 +21,11 @@ Response: `{"mii": "4", "iin": "411111", "pan": "1111111111", "checkdigit": "1",
 "checkdigit" will be null if card number is invalid (fails Luhn)
 
 ### Generate random credit card
-GET /card/random/{network}
----TODO---
+GET `/card/random/{network}`
+Args: network must be one of: ['amercian_express'|discover_card'|'jcb'|'mastercard'|'visa']
+Example Request: `curl 127.0.0.1:8000/card/random/american_express`
+Response: `{"3700003550876594": {"mii": "3", "iin": "370000", "pan": "355087659", "checkdigit": "4", "valid": true, "network": "American Express"}}`
+
 
 ## Test
 

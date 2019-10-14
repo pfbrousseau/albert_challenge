@@ -8,10 +8,16 @@ from cardbert.serializers import CardSerializer
 def card_parse(request, creditcard_number):
     # Get, so that it can be cached. Ignoring the fact that credit cards
     # should never be cached, nor sent unencrypted
+    if (not creditcard_number) or (not creditcard_number.isdigit()):
+        return JsonResponse(status=400, data={'status':'false','message':f'Invalid card number: {creditcard_number}'})
     serializer = CardSerializer(Card(number=creditcard_number))
     return JsonResponse(serializer.data, status=200)
 
 
 def card_random(request, network=None):
-    number = Card.random_for_network(network=network).number
-    return JsonResponse({number: number}, status=200)
+    card = Card.random_for_network(network=network)
+    if not card:
+        return JsonResponse(status=404, data={'status':'false','message':f'Network {network} is not recognized.'})
+
+    serializer = CardSerializer(card)
+    return JsonResponse({card.number: serializer.data}, status=200)

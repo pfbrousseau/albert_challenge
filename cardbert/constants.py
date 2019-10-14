@@ -1,7 +1,7 @@
 # Networks
 # https://en.wikipedia.org/wiki/Payment_card_number#Issuer_identification_number_(IIN)
 
-AE = 'Amercian Express'
+AE = 'American Express'
 DC = 'Discover Card'
 JCB = 'JCB'
 MC = 'Mastercard'
@@ -26,6 +26,8 @@ NETWORK_RANGES = {
 
 # Perform this only once and store in a variable
 NETWORK_RANGES_KEYS = sorted(NETWORK_RANGES.keys())
+
+NUMBER_FOR_NETWORK = {name.lower().replace(' ', '_'): str(number) for (number, name) in NETWORK_RANGES.items() if name }
 
 
 # MII

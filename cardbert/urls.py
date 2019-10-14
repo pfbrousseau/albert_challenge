@@ -8,5 +8,5 @@ urlpatterns = [
     # path('card/(P<cc>\w+)', views.card_parse), # TODO use this instead?
     # #https://stackoverflow.com/a/150518
     path('card/random/<str:network>', views.card_random),
-    path('card/random', views.card_random),
+    path('card/random/', views.card_random),
 ]

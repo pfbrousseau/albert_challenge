@@ -20,7 +20,12 @@ class TestCard(TestCase):
 
     def test_has_pan(self):
         card = Card(number='4' + '1' * 15)
-        assert(card.pan == '1' * 10)
+        assert(card.pan == '1' * 9), "PAN should be 9 digits long. IIN is 6 digits and don't add checksum to PAN"
+
+    def test_has_pan(self):
+        card = Card(number='52'*8)
+        assert(card.pan[-1] != '2'), "PAN should not include checksum"
+        assert(card.pan[-1] == '5')
 
     def test_valid(self):
         card = Card(number='4' + '1' * 15)

@@ -1,7 +1,7 @@
 from bisect import bisect_right
-from random import randint
+import random
 
-from cardbert.constants import NETWORK_RANGES, NETWORK_RANGES_KEYS, MII_CHOICES_DICT, IIN_LENGTH
+from cardbert.constants import NETWORK_RANGES, NETWORK_RANGES_KEYS, MII_CHOICES_DICT, IIN_LENGTH, NUMBER_FOR_NETWORK
 from django.db import models
 
 import luhn
@@ -50,6 +50,8 @@ class Card(models.Model):
     # Consider making a cached property with `@functools.lru_cache()``
     @property
     def valid(self):
+        if (not self.number) or (not self.number.isdigit()):
+            return False
         return luhn.verify(self.number)
 
     @property
@@ -75,22 +77,47 @@ class Card(models.Model):
         """ Generate a Card object with a random number.
 
         Args:
-            network (str):
+            network (str): ['amercian_express'|discover_card'|'jcb'|'mastercard'|'visa']
             length (int, optional)
 
         Returns:
-            Card:
+            card (Card): A valid card for network requested
+                If no network is given, a random one will be chosen. 
+                If network is given but not found, 'None' will be returned. Consider raising and catching instead
         """
-        network_iin = str(4)  # network.lower()
-        digit_count_remaining = length - network_iin - 1  # -1 for checksum
-        random_digits = ''.join(str(randint(0, 9))
+        network_iin = cls.iin_from_network(network)
+        if not network_iin:
+            return None
+        digit_count_remaining = length - len(network_iin) - 1  # -1 for checksum
+        random_digits = ''.join(str(random.randint(0, 9))
                                 for _ in range(digit_count_remaining))
         number = luhn.append(network_iin + random_digits)
 
         return cls(number=number)
 
-    # @classmethod
-    # def from_number(cls, cc_number ):
-    #     card = cls(iin=cc_number[:6])
-    #     # do something with the book
-    #     return card
+    @classmethod
+    def iin_from_network(cls, network=None):
+        """
+        Get the first matching IIN value for network. 
+        This could be improved to give any random number in possible range but will work for now
+        
+
+        Args:
+            network (str): ['amercian_express'|discover_card'|'jcb'|'mastercard'|'visa'|None] 
+
+        Returns:
+            iin (str): A iin for network (currently last defined starting range).
+                If no network is given, a random one will be chosen. 
+                If network is given but not found, 'None' will be returned
+        """
+
+        if network is None:
+            return random.choice(list(NUMBER_FOR_NETWORK.values()))
+
+        # Todo: Could get all matches as well as ending value (next index)
+        iin = NUMBER_FOR_NETWORK.get(network.lower().replace(' ', '_'))
+        # if iin is None:
+        #     raise NetworkUnknownError
+
+        return str(iin)
+
