@@ -9,14 +9,13 @@ import luhn
 
 class Card(models.Model):
     """
-    Only attribute is the number as the others can be generated as needed. 
+    Only attribute is the number as the others can be generated as needed.
     All other attributes are accessed through properties.
     Using chars instead of Int when leading zeroes must be tracked, especially when number length is not known
     """
-   
+
     number = models.CharField(max_length=19)
 
-    
     # https://en.wikipedia.org/wiki/ISO/IEC_7812#Major_industry_identifier
     @property
     def mii(self):
@@ -27,7 +26,7 @@ class Card(models.Model):
     @property
     def mii_description(self):
         return MII_CHOICES_DICT.get(str(self.mii))
-    
+
     # https://en.wikipedia.org/wiki/Payment_card_number#Issuer_identification_number_(IIN)
     @property
     def iin(self):
@@ -44,9 +43,9 @@ class Card(models.Model):
 
     @property
     def checkdigit(self):
-        if not self.valid: # If number is not valid, checkdigit doesn't make sense
+        if not self.valid:  # If number is not valid, checkdigit doesn't make sense
             return None
-        return self.number[-1]   
+        return self.number[-1]
 
     # Consider making a cached property with `@functools.lru_cache()``
     @property
@@ -65,7 +64,7 @@ class Card(models.Model):
         if len(self.iin) < 6:
             # debug: Invalid IIN cannot have a network
             return None
-        
+
         # Find the lowest number that comes before (or including) IIN
         left_key_index = bisect_right(NETWORK_RANGES_KEYS, int(self.iin)) - 1
         left_key = NETWORK_RANGES_KEYS[left_key_index]
@@ -80,11 +79,12 @@ class Card(models.Model):
             length (int, optional)
 
         Returns:
-            Card: 
+            Card:
         """
-        network_iin = str(4) # network.lower()
-        digit_count_remaining = length - network_iin - 1 # -1 for checksum
-        random_digits = ''.join(str(randint(0,9)) for _ in range(digit_count_remaining))
+        network_iin = str(4)  # network.lower()
+        digit_count_remaining = length - network_iin - 1  # -1 for checksum
+        random_digits = ''.join(str(randint(0, 9))
+                                for _ in range(digit_count_remaining))
         number = luhn.append(network_iin + random_digits)
 
         return cls(number=number)

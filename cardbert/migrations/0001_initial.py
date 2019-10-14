@@ -14,8 +14,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Card',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('number', models.CharField(max_length=19)),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('number',
+                 models.CharField(
+                     max_length=19)),
             ],
         ),
     ]
