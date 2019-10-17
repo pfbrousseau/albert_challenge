@@ -6,8 +6,6 @@ from cardbert.serializers import CardSerializer
 
 
 def card_parse(request, creditcard_number):
-    # Get, so that it can be cached. Ignoring the fact that credit cards
-    # should never be cached, nor sent unencrypted
     if (not creditcard_number) or (not creditcard_number.isdigit()):
         return JsonResponse(status=400, data={'status':'false','message':f'Invalid card number: {creditcard_number}'})
     serializer = CardSerializer(Card(number=creditcard_number))
